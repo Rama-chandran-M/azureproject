@@ -14,7 +14,7 @@ variables:
   imageRepository: 'project001-image'
   containerRegistry: 'project001registry-fmddb0axfjazb4a7.azurecr.io'
   dockerfilePath: '$(Build.SourcesDirectory)/Dockerfile'
-  tag: 'latest'
+  tag: '$(Build.BuildId)'
 
   # Agent VM image name
   vmImageName: 'ubuntu-latest'
@@ -36,10 +36,11 @@ stages:
         dockerfile: $(dockerfilePath)
         containerRegistry: $(dockerRegistryServiceConnection)
         tags: |
+          latest
           $(tag)
     - task: AzureWebAppContainer@1
       displayName: Deploy to App Service
       inputs:
         azureSubscription: 'resource-group-service-connection'   # <-- CHANGE THIS
         appName: 'project001-webapp'
-        containers: 'project001registry-fmddb0axfjazb4a7.azurecr.io/project001-image:latest'
+        containers: 'project001registry-fmddb0axfjazb4a7.azurecr.io/project001-image:$(Build.BuildId)'
